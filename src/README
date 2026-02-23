@@ -1,0 +1,57 @@
+nadav.levi
+216388090
+
+Section 9.2.4:
+1. Avatar Implementation:
+	- Classes Structure:
+	  The avatar implementation is in the pepse.world.avatar package and consists of three classes:
+		Avatar- The main class representing the player character.
+		AvatarMode- An enum defining the avatar's possible states.
+		EnergyDisplay- A UI GameObject that displays the current energy level.
+	- Classes Relationships:
+	  The Avatar class is the central class that manages the character's behavior.
+	  It uses AvatarMode enum internally to track its current state,
+	  and communicates with EnergyDisplay through a Consumer<Integer> callback pattern (Observer pattern).
+	  When the avatar's energy changes, it invokes the callback, which triggers a method of EnergyDisplay,
+	  to update the visual display.
+	- Movement State Design:
+	  The avatar's movement is managed through the AvatarMode enum, which defines three distinct states:
+		IDLE- The avatar is stationary on the ground.
+		      No movement keys are pressed or insufficient energy for movement.
+		RUN- The avatar moves only horizontally.
+		JUMP- The avatar is airborne, moving vertically (and optionally horizontally).
+	  The avatar tracks its previous state for only updating the animation when the mode actually changes.
+	- Energy Display Design:
+	  The energy display follows the Observer pattern using Java's Consumer<Integer> functional interface:
+	  The Avatar constructor receives an energy listener (a reference to EnergyDisplay.onEnergyChange()).
+	  During each update cycle, if the energy offset is non-zero,
+	  the avatar updates its internal energy value and notify listeners (the display).
+	  The EnergyDisplay.onEnergyChange() method updates the display to the current energy.
+	  This design ensures that the display is only updated when energy actually changes,
+	  avoiding unnecessary rendering operations.
+
+2. Trees Package Implementation:
+	- Classes Structure:
+	  The trees implementation is in the pepse.world.trees package and consists of four classes:
+		Flora- Responsible for generating trees within a specified range.
+			Uses seeded randomness to ensure that the same coordinates always produce the same trees. 
+			Receives the ground height function to place trees correctly on terrain.
+		Tree- Represents a complete tree with trunk, leaves, and fruits. 
+		    Manages the creation and storage of Leaf and Fruit collections.
+			Uses a grid for randomly placing leaves and fruits above the trunk.
+			Creates a scheduled task that invokes leaves transitions randomly, to make wind look realistic.
+		Leaf- Individual leaf GameObject with wind animation.
+		    Uses Transitions to simulate wind,
+			by changing angle and size in a back-and-forth motion.
+		Fruit- Collectible items that provide energy to the avatar upon collision. 
+			Implements a respawn mechanism after a cooldown period.
+
+	- Classes Relationships:
+	  The Flora class creates Tree objects.
+	  Each Tree contains and manages collections of Leaf and Fruit objects.
+	  Communication between fruits and the avatar's energy system,
+	  is handled through a Runnable callback passed down from Flora to Tree to Fruit.
+	  
+3. There are no additional classes/packages.
+
+4. There are no changes in the API.
